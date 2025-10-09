@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>Página No Encontrada - Bahía Under</title>
+    
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
+    <link href="https://fonts.cdnfonts.com/css/druk-wide-bold" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #0b0b0c;
+            --bg-elev: #141416;
+            --bg-secondary: #1a1a1c;
+            --fg: #f4f4f5;
+            --fg-muted: #a1a1aa;
+            --fg-subtle: #71717a;
+            --brand: #a78bfa;
+            --brand-hover: #8b5cf6;
+            --brand-light: rgba(167, 139, 250, 0.1);
+            --border: #26272b;
+            --card: #121214;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            --radius: 0.5rem;
+            --radius-lg: 1rem;
+            --space-lg: 1rem;
+            --space-2xl: 2rem;
+            --space-3xl: 3rem;
+            
+            --display-font: "Druk Wide Bold", Impact, "Arial Black", sans-serif;
+            --body-font: "Inconsolata", monospace;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--body-font);
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+        }
+        
+        .error-container {
+            max-width: 600px;
+            width: 100%;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3xl);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .error-code {
+            font-family: var(--display-font);
+            font-size: 6rem;
+            color: var(--brand);
+            margin-bottom: var(--space-lg);
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+        }
+        
+        .error-title {
+            font-family: var(--display-font);
+            font-size: 2rem;
+            color: var(--fg);
+            margin-bottom: var(--space-lg);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .error-message {
+            font-size: 1.1rem;
+            color: var(--fg-muted);
+            margin-bottom: var(--space-2xl);
+            line-height: 1.6;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-lg);
+            padding: var(--space-lg) var(--space-2xl);
+            background: var(--brand);
+            color: var(--bg);
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .back-link:hover {
+            background: var(--brand-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(167, 139, 250, 0.3);
+        }
+        
+        .back-link::before {
+            content: "←";
+            font-size: 1.2em;
+        }
+        
+        @media (max-width: 768px) {
+            .error-code { font-size: 4rem; }
+            .error-title { font-size: 1.5rem; }
+            .error-container { padding: var(--space-2xl); }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <h1 class="error-title">Página No Encontrada</h1>
+        <p class="error-message">
+            La página que buscás no existe o fue movida.<br>
+            Podés navegar de vuelta al inicio o explorar nuestro contenido.
+        </p>
+        <a href="/proyectos/bahia-under-web/" class="back-link">Volver al inicio</a>
+    </div>
+</body>
+</html>

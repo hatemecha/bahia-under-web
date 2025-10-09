@@ -1,0 +1,768 @@
+/* ================== TEMA MATRIX corte hacker corte te voy a romper el culo si me jodes algo ================== */
+
+/* Variables CSS para el tema Matrix */
+:root[data-theme="matrix"] {
+  /* Colores principales de Matrix */
+  --bg: #000000;
+  --bg-elev: #001100;
+  --bg-secondary: #002200;
+  --fg: #00ff00;
+  --fg-muted: #00cc00;
+  --fg-subtle: #009900;
+  --muted: #00aa00;
+  --brand: #00ff00;
+  --brand-hover: #00ff41;
+  --brand-light: rgba(0, 255, 0, 0.1);
+  --brand-ink: #000000;
+  --border: #003300;
+  --border-light: #006600;
+  --card: #001100;
+  --shadow: 0 10px 30px rgba(0, 255, 0, 0.2);
+  --shadow-sm: 0 1px 2px rgba(0, 255, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 255, 0, 0.15);
+  --shadow-xl: 0 20px 25px rgba(0, 255, 0, 0.2);
+
+  /* Efectos especiales */
+  --matrix-glow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+  --matrix-text-shadow: 0 0 5px #00ff00;
+}
+
+/* Efectos de fondo Matrix */
+body[data-theme="matrix"] {
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(0, 255, 0, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 255, 0, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(0, 255, 0, 0.01) 0%, transparent 50%),
+    linear-gradient(135deg, #000000 0%, #001100 50%, #000000 100%);
+  background-attachment: fixed;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Efecto de lluvia de caracteres Matrix */
+body[data-theme="matrix"]::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 0, 0.03) 2px,
+      rgba(0, 255, 0, 0.03) 4px
+    );
+  pointer-events: none;
+  z-index: 1;
+  animation: matrixRain 20s linear infinite;
+}
+
+@keyframes matrixRain {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Borde verde para separar la lluvia del contenido (no recuerdo si funcionaba o no)*/
+body[data-theme="matrix"]::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 100%;
+  border-left: 2px solid #00ff00;
+  border-right: 2px solid #00ff00;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 
+    -2px 0 10px rgba(0, 255, 0, 0.3),
+    2px 0 10px rgba(0, 255, 0, 0.3);
+  animation: matrixBorderGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes matrixBorderGlow {
+  from {
+    box-shadow: 
+      -2px 0 10px rgba(0, 255, 0, 0.3),
+      2px 0 10px rgba(0, 255, 0, 0.3);
+  }
+  to {
+    box-shadow: 
+      -2px 0 20px rgba(0, 255, 0, 0.6),
+      2px 0 20px rgba(0, 255, 0, 0.6);
+  }
+}
+
+
+body[data-theme="matrix"] h1,
+body[data-theme="matrix"] h2,
+body[data-theme="matrix"] h3,
+body[data-theme="matrix"] .brand,
+body[data-theme="matrix"] .title {
+  text-shadow: var(--matrix-text-shadow);
+  animation: matrixGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes matrixGlow {
+  from {
+    text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00;
+  }
+  to {
+    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+  }
+}
+
+/* Efectos en botones */
+body[data-theme="matrix"] .btn {
+  border: 1px solid #00ff00;
+  background: rgba(0, 255, 0, 0.05);
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+body[data-theme="matrix"] .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+body[data-theme="matrix"] .btn:hover::before {
+  left: 100%;
+}
+
+body[data-theme="matrix"] .btn:hover {
+  background: rgba(0, 255, 0, 0.1);
+  box-shadow: var(--matrix-glow);
+  transform: translateY(-2px);
+}
+
+body[data-theme="matrix"] .btn.primary {
+  background: #00ff00;
+  color: #000000;
+  text-shadow: none;
+  box-shadow: var(--matrix-glow);
+}
+
+body[data-theme="matrix"] .btn.primary:hover {
+  background: #00ff41;
+  box-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41;
+}
+
+/* Efectos en cards */
+body[data-theme="matrix"] .card {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.8);
+  box-shadow: var(--matrix-glow);
+  position: relative;
+}
+
+body[data-theme="matrix"] .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 49%, rgba(0, 255, 0, 0.1) 50%, transparent 51%);
+  background-size: 20px 20px;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* Efectos en inputs */
+body[data-theme="matrix"] .input {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+body[data-theme="matrix"] .input:focus {
+  border-color: #00ff41;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  background: rgba(0, 17, 0, 0.8);
+}
+
+body[data-theme="matrix"] .input::placeholder {
+  color: #006600;
+  text-shadow: none;
+}
+
+/* Efectos en el header */
+body[data-theme="matrix"] .site-header {
+  background: rgba(0, 0, 0, 0.9);
+  border-bottom: 2px solid #00ff00;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+/* Efectos en el reproductor */
+body[data-theme="matrix"] .player-bar {
+  background: linear-gradient(135deg, #000000 0%, #001100 100%);
+  border-top: 2px solid #00ff00;
+  box-shadow: 0 -8px 32px rgba(0, 255, 0, 0.3);
+}
+
+body[data-theme="matrix"] .player-btn {
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+body[data-theme="matrix"] .player-btn:hover {
+  color: #00ff41;
+  text-shadow: 0 0 10px #00ff41;
+}
+
+body[data-theme="matrix"] .player-btn.play {
+  background: #00ff00;
+  color: #000000;
+  text-shadow: none;
+  box-shadow: var(--matrix-glow);
+}
+
+body[data-theme="matrix"] .player-btn.play:hover {
+  background: #00ff41;
+  box-shadow: 0 0 20px #00ff41;
+}
+
+/* Efectos en el footer */
+body[data-theme="matrix"] footer {
+  border-top: 2px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+}
+
+/* Efectos de glitch en elementos importantes */
+body[data-theme="matrix"] .brand {
+  animation: matrixGlitch 3s ease-in-out infinite;
+}
+
+@keyframes matrixGlitch {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-2px); }
+  20% { transform: translateX(2px); }
+  30% { transform: translateX(-1px); }
+  40% { transform: translateX(1px); }
+  50% { transform: translateX(0); }
+}
+
+/* Efectos en enlaces */
+body[data-theme="matrix"] a {
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+  transition: all 0.3s ease;
+}
+
+body[data-theme="matrix"] a:hover {
+  color: #00ff41;
+  text-shadow: 0 0 10px #00ff41;
+}
+
+/* Efectos en el menú */
+body[data-theme="matrix"] .menu a {
+  position: relative;
+  overflow: hidden;
+}
+
+body[data-theme="matrix"] .menu a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #00ff00;
+  transition: width 0.3s ease;
+}
+
+body[data-theme="matrix"] .menu a:hover::after,
+body[data-theme="matrix"] .menu a.active::after {
+  width: 100%;
+}
+
+/* Efectos en las barras de progreso */
+body[data-theme="matrix"] .progress-bar::before {
+  background: linear-gradient(90deg, #00ff00, #00ff41);
+  box-shadow: 0 0 10px #00ff00;
+}
+
+body[data-theme="matrix"] .volume-bar::before {
+  background: linear-gradient(90deg, #00ff00, #00ff41);
+  box-shadow: 0 0 10px #00ff00;
+}
+
+/* Efectos en los sliders */
+body[data-theme="matrix"] input[type="range"] {
+  background: rgba(0, 255, 0, 0.2);
+}
+
+body[data-theme="matrix"] input[type="range"]::-webkit-slider-thumb {
+  background: #00ff00;
+  box-shadow: 0 0 10px #00ff00;
+}
+
+body[data-theme="matrix"] input[type="range"]::-moz-range-thumb {
+  background: #00ff00;
+  box-shadow: 0 0 10px #00ff00;
+}
+
+/* Efectos en las pistas */
+body[data-theme="matrix"] .track {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.3);
+}
+
+body[data-theme="matrix"] .track.playing {
+  background: rgba(0, 255, 0, 0.1);
+  border-left: 4px solid #00ff00;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+/* Efectos en los comentarios */
+body[data-theme="matrix"] .comment {
+  border-bottom: 1px solid #003300;
+}
+
+body[data-theme="matrix"] .comment-reply {
+  border-left: 2px solid #00ff00;
+}
+
+/* Efectos en los avatares */
+body[data-theme="matrix"] .comment-avatar,
+body[data-theme="matrix"] .avatar-img {
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+/* Efectos en los formularios */
+body[data-theme="matrix"] .form-group label {
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+/* Efectos en las alertas */
+body[data-theme="matrix"] .alert {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.8);
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+/* Efectos en los modales */
+body[data-theme="matrix"] .modal {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+body[data-theme="matrix"] .modal .form {
+  border: 2px solid #00ff00;
+  background: rgba(0, 17, 0, 0.9);
+  box-shadow: var(--matrix-glow);
+}
+
+/* Efectos en las tablas */
+body[data-theme="matrix"] table {
+  border: 1px solid #00ff00;
+}
+
+body[data-theme="matrix"] th,
+body[data-theme="matrix"] td {
+  border: 1px solid #003300;
+  color: #00ff00;
+}
+
+body[data-theme="matrix"] th {
+  background: rgba(0, 255, 0, 0.1);
+  text-shadow: 0 0 5px #00ff00;
+}
+
+/* Efectos en los badges y chips */
+body[data-theme="matrix"] .badge,
+body[data-theme="matrix"] .chip {
+  background: #00ff00;
+  color: #000000;
+  border: 1px solid #00ff41;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+/* Efectos en los tags */
+body[data-theme="matrix"] .tag {
+  border: 1px solid #00ff00;
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+}
+
+/* Efectos en los selectores */
+body[data-theme="matrix"] select.input {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2300ff00' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* Efectos en los checkboxes */
+body[data-theme="matrix"] input[type="checkbox"] {
+  accent-color: #00ff00;
+}
+
+/* Efectos en los radio buttons */
+body[data-theme="matrix"] input[type="radio"] {
+  accent-color: #00ff00;
+}
+
+/* Efectos en los textareas */
+body[data-theme="matrix"] textarea.input {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+body[data-theme="matrix"] textarea.input:focus {
+  border-color: #00ff41;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  background: rgba(0, 17, 0, 0.8);
+}
+
+/* Efectos en los elementos de búsqueda */
+body[data-theme="matrix"] .search {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+}
+
+body[data-theme="matrix"] .search:focus-within {
+  border-color: #00ff41;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  background: rgba(0, 17, 0, 0.8);
+}
+
+/* Efectos en los elementos de filtros */
+body[data-theme="matrix"] .filters {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+}
+
+/* Efectos en los elementos de paginación */
+body[data-theme="matrix"] .pagination {
+  color: #00ff00;
+}
+
+/* Efectos en los elementos de navegación */
+body[data-theme="matrix"] .nav-link {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+  color: #00ff00;
+}
+
+body[data-theme="matrix"] .nav-link:hover {
+  background: rgba(0, 255, 0, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+/* Efectos en los elementos de perfil */
+body[data-theme="matrix"] .profile-link {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+  color: #00ff00;
+}
+
+body[data-theme="matrix"] .profile-link:hover {
+  background: rgba(0, 255, 0, 0.1);
+  border-color: #00ff41;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+/* Efectos en los elementos de estadísticas */
+body[data-theme="matrix"] .stat-item {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+}
+
+body[data-theme="matrix"] .stat-number {
+  color: #00ff00;
+  text-shadow: 0 0 10px #00ff00;
+}
+
+/* Efectos en los elementos de contacto */
+body[data-theme="matrix"] .contact-item {
+  border-bottom: 1px solid #003300;
+}
+
+/* Efectos en los elementos de personalización */
+body[data-theme="matrix"] .color-picker-container {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+}
+
+body[data-theme="matrix"] .color-value {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.8);
+  color: #00ff00;
+}
+
+/* Efectos en los elementos de edición */
+body[data-theme="matrix"] .avatar-section {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.3);
+}
+
+/* Efectos en los elementos de blog */
+body[data-theme="matrix"] .blog-card {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+}
+
+body[data-theme="matrix"] .blog-card:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+body[data-theme="matrix"] .blog-post {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.8);
+  box-shadow: var(--matrix-glow);
+}
+
+/* Efectos en los elementos de eventos */
+body[data-theme="matrix"] .event-card {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+}
+
+body[data-theme="matrix"] .event-card:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+/* Efectos en los elementos de releases */
+body[data-theme="matrix"] .release-card {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+}
+
+body[data-theme="matrix"] .release-card:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+/* Efectos en los elementos de tracklist */
+body[data-theme="matrix"] .tracklist,
+body[data-theme="matrix"] .tracks,
+body[data-theme="matrix"] .release-tracks,
+body[data-theme="matrix"] .playlist {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.5);
+}
+
+/* Efectos en los elementos de release hero */
+body[data-theme="matrix"] .release-hero {
+  border: 1px solid #00ff00;
+  background: rgba(0, 17, 0, 0.8);
+  box-shadow: var(--matrix-glow);
+}
+
+/* Efectos en los elementos de cover */
+body[data-theme="matrix"] .cover,
+body[data-theme="matrix"] .cover-120 {
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+/* Efectos en los elementos de cover placeholder */
+body[data-theme="matrix"] .cover-placeholder {
+  border: 1px solid #00ff00;
+  background: linear-gradient(135deg, #001100, #000000);
+}
+
+/* Efectos en los elementos de event flyer */
+body[data-theme="matrix"] .event-flyer {
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+/* Efectos en los elementos de event flyer placeholder */
+body[data-theme="matrix"] .event-flyer.ph {
+  background: repeating-linear-gradient(
+    45deg,
+    #001100 0 10px,
+    #000000 10px 20px
+  );
+}
+
+/* Efectos en los elementos de empty state */
+body[data-theme="matrix"] .empty {
+  border: 1px dashed #00ff00;
+  background: rgba(0, 255, 0, 0.05);
+  color: #00ff00;
+}
+
+/* Efectos en los elementos de loading */
+body[data-theme="matrix"] .loading-spinner {
+  border: 2px solid #003300;
+  border-top: 2px solid #00ff00;
+}
+
+/* Efectos en los elementos de error */
+body[data-theme="matrix"] .card-error {
+  border-color: #ff0000;
+  color: #ff0000;
+  background: rgba(255, 0, 0, 0.1);
+  text-shadow: 0 0 5px #ff0000;
+}
+
+/* Efectos en los elementos de info */
+body[data-theme="matrix"] .card-info {
+  border-color: #00ff00;
+  color: #00ff00;
+  background: rgba(0, 255, 0, 0.1);
+  text-shadow: 0 0 5px #00ff00;
+}
+
+/* Efectos en los elementos de success */
+body[data-theme="matrix"] .alert-success {
+  border-color: #00ff00;
+  color: #00ff00;
+  background: rgba(0, 255, 0, 0.1);
+  text-shadow: 0 0 5px #00ff00;
+}
+
+/* Efectos en los elementos de error */
+body[data-theme="matrix"] .alert-error {
+  border-color: #ff0000;
+  color: #ff0000;
+  background: rgba(255, 0, 0, 0.1);
+  text-shadow: 0 0 5px #ff0000;
+}
+
+/* Efectos en los elementos de status */
+body[data-theme="matrix"] .status-active {
+  background: rgba(0, 255, 0, 0.2);
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+body[data-theme="matrix"] .status-banned {
+  background: rgba(255, 0, 0, 0.2);
+  color: #ff0000;
+  text-shadow: 0 0 5px #ff0000;
+}
+
+body[data-theme="matrix"] .status-pending {
+  background: rgba(255, 255, 0, 0.2);
+  color: #ffff00;
+  text-shadow: 0 0 5px #ffff00;
+}
+
+/* Efectos en los elementos de muted */
+body[data-theme="matrix"] .muted {
+  color: #006600;
+}
+
+body[data-theme="matrix"] .subtle {
+  color: #003300;
+}
+
+/* Efectos en los elementos de brand color */
+body[data-theme="matrix"] .brand-color {
+  color: #00ff00;
+  text-shadow: 0 0 10px #00ff00;
+}
+
+/* Efectos en los elementos de hidden */
+body[data-theme="matrix"] .hidden {
+  display: none !important;
+}
+
+/* Efectos en los elementos de sr-only */
+body[data-theme="matrix"] .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Efectos en los elementos de print */
+@media print {
+  body[data-theme="matrix"] {
+    background: #000000 !important;
+    color: #00ff00 !important;
+  }
+  
+  body[data-theme="matrix"] .card,
+  body[data-theme="matrix"] .blog-post {
+    border: 1px solid #00ff00 !important;
+    background: #000000 !important;
+    color: #00ff00 !important;
+  }
+}
+
+/* Efectos de transición suave al cambiar tema */
+body[data-theme="matrix"] * {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efectos especiales para elementos interactivos */
+body[data-theme="matrix"] .btn:active,
+body[data-theme="matrix"] .input:focus,
+body[data-theme="matrix"] .card:hover {
+  transform: translateY(-1px);
+}
+
+/* Efectos de parpadeo ocasional */
+body[data-theme="matrix"] .brand {
+  animation: matrixGlitch 3s ease-in-out infinite, matrixBlink 5s ease-in-out infinite;
+}
+
+@keyframes matrixBlink {
+  0%, 90%, 100% { opacity: 1; }
+  95% { opacity: 0.7; }
+}
+
+/* Efectos de distorsión en elementos de texto */
+body[data-theme="matrix"] h1,
+body[data-theme="matrix"] h2,
+body[data-theme="matrix"] h3 {
+  animation: matrixTextDistort 4s ease-in-out infinite;
+}
+
+@keyframes matrixTextDistort {
+  0%, 100% { transform: scale(1) skew(0deg); }
+  25% { transform: scale(1.02) skew(0.5deg); }
+  50% { transform: scale(1) skew(0deg); }
+  75% { transform: scale(0.98) skew(-0.5deg); }
+}
+
+/* Efectos de partículas flotantes */
+body[data-theme="matrix"] .matrix-particles {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #00ff00, transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(0, 255, 0, 0.5), transparent),
+    radial-gradient(1px 1px at 90px 40px, #00ff00, transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(0, 255, 0, 0.5), transparent),
+    radial-gradient(2px 2px at 160px 30px, #00ff00, transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+  pointer-events: none;
+  z-index: 1;
+  animation: matrixParticles 15s linear infinite;
+  opacity: 0.3;
+}
+
+@keyframes matrixParticles {
+  0% { transform: translateY(0) translateX(0); }
+  100% { transform: translateY(-100vh) translateX(50px); }
+}

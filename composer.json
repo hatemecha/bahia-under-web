@@ -1,0 +1,14 @@
+{
+    "name": "bahia-under/web",
+    "description": "Plataforma web para el underground de Bahía Blanca",
+    "version": "0.9.0-beta",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.0",
+        "james-heinrich/getid3": "^1.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}

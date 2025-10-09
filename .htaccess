@@ -1,0 +1,83 @@
+# =====================================================
+# Bahía Under - Configuración de Apache
+# =====================================================
+
+# Proteger archivos sensibles
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "^composer\.(json|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(log|sql|bak|md)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Bloquear acceso a archivos de configuración
+<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|swp)|~)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevenir listado de directorios
+Options -Indexes
+
+# Páginas de error personalizadas (HTML con configuración forzada)
+ErrorDocument 403 /proyectos/bahia-under-web/error-403.html
+ErrorDocument 404 /proyectos/bahia-under-web/error-404.html
+ErrorDocument 500 /proyectos/bahia-under-web/error-500.html
+
+# Activar RewriteEngine (si se necesita en el futuro)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Redirigir a HTTPS (descomentar en producción)
+    # RewriteCond %{HTTPS} !=on
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Configurar tipos MIME correctos
+<IfModule mod_mime.c>
+    AddType text/html .html
+    AddType text/html .htm
+    AddType audio/mpeg .mp3
+    AddType audio/wav .wav
+    AddType audio/flac .flac
+    AddType audio/ogg .ogg
+    AddType audio/webm .weba
+</IfModule>
+
+# Forzar que los archivos de error se sirvan como HTML
+<Files "error-*.html">
+    ForceType text/html
+</Files>
+
+# Comprimir contenido (si está disponible)
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Configurar caché para archivos estáticos
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType audio/mpeg "access plus 1 month"
+</IfModule>
+
+# Límite de tamaño de upload (ajustar según necesidad)
+# php_value upload_max_filesize 50M
+# php_value post_max_size 50M
+# php_value max_execution_time 300
+# php_value max_input_time 300

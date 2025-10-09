@@ -1,0 +1,143 @@
+# =====================================================
+# BAHÍA UNDER - ARCHIVOS A IGNORAR EN GIT
+# =====================================================
+
+# Archivos de configuración sensibles
+config/production.php
+.env
+.env.local
+.env.production
+.env.development
+
+# Archivos de logs sensibles
+logs/
+*.log
+**/*.log
+password_migration_log.txt
+
+# Archivos de encriptación y claves
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+
+# Archivos de debug y testing
+debug-*.php
+test-*.php
+test_*.php
+check-*.php
+dev/error_log.php
+
+# Herramientas de desarrollo (no para producción)
+dev-tools/
+
+# Archivos de backup
+backups/
+*.sql
+!database/schema.sql
+*.zip
+*.tar.gz
+*.bak
+
+# Archivos subidos por usuarios (contenido dinámico)
+media/audio/
+media/avatars/
+media/covers/
+media/flyers/
+media/zips/
+media/tracks/
+
+# Archivos del sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.tmp
+*.temp
+
+# Archivos de IDE y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+
+# Archivos de Composer
+vendor/
+composer.lock
+
+# Archivos de Node.js (si se agregan en el futuro)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Archivos de cache y temporales
+cache/
+tmp/
+temp/
+sessions/
+
+# Archivos de error de PHP
+error_log
+php_errors.log
+access.log
+
+# Archivos de configuración del servidor
+.htaccess.local
+nginx.conf.local
+apache.conf.local
+httpd.conf.local
+
+# Archivos de configuración de base de datos
+database.php
+db_config.php
+
+# Archivos de certificados SSL
+ssl/
+certs/
+*.crt
+*.key
+
+# Archivos de configuración específicos del entorno
+config/database.php
+config/app.php
+config/mail.php
+
+# Archivos de migración de datos sensibles
+migrations/data/
+seeds/sensitive/
+
+# Archivos de documentación privada
+docs/private/
+*.private.md
+
+# Archivos de configuración de Docker (si se agregan)
+docker-compose.override.yml
+.dockerignore
+
+# Archivos de configuración de CI/CD
+.github/workflows/secrets.yml
+.gitlab-ci.yml.local
+
+# Archivos de monitoreo y métricas
+monitoring/
+metrics/
+*.metrics
+
+# Archivos de configuración de Redis (si se agregan)
+redis.conf.local
+
+# Archivos de configuración de Elasticsearch (si se agregan)
+elasticsearch.yml.local
+
+# Archivos de ejemplo/documentación de base de datos que NO deben subirse (contienen datos sensibles de prueba)
+database/README.md
+database/seeds.sql
+
