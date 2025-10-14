@@ -14,8 +14,10 @@
  */
 (function themeInit() {
   const key = "ugb_theme";
+  const matrixKey = "ugb_matrix_theme";
   const root = document.documentElement;
   const saved = localStorage.getItem(key);
+  const matrixActive = localStorage.getItem(matrixKey) === "true";
   
   // En móviles, forzar tema oscuro
   if (window.innerWidth <= 768) {
@@ -23,9 +25,18 @@
     return;
   }
   
-  // Solo permitir light o dark en el ciclo normal en desktop
-  if (saved === "light" || saved === "dark")
+  // Verificar si el tema Matrix está activo
+  if (matrixActive) {
+    root.setAttribute("data-theme", "matrix");
+    // Cambiar brand color a verde cuando se restaura Matrix
+    setMatrixBrandColor();
+    console.log("Tema Matrix restaurado desde localStorage");
+  } else if (saved === "light" || saved === "dark") {
+    // Solo permitir light o dark en el ciclo normal en desktop
     root.setAttribute("data-theme", saved);
+    // Restaurar brand color normal
+    restoreNormalBrandColor();
+  }
 
   const btn = document.querySelector("[data-theme-toggle]");
   if (btn) {
@@ -34,21 +45,79 @@
       btn.setAttribute("aria-pressed", String(t === "dark"));
       let themeEmoji = "🌙"; // Oscuro por defecto
       if (t === "light") themeEmoji = "☀️";
+      // No mostrar indicador para Matrix (es un easter egg)
       btn.innerHTML = themeEmoji;
     };
     syncBtn();
     btn.addEventListener("click", () => {
       const curr = root.getAttribute("data-theme") || "dark";
       let next = "dark";
+      
+      // Solo alternar entre light y dark, no tocar Matrix
+      if (curr === "matrix") {
+        // Si está en Matrix, no hacer nada con el botón normal
+        console.log("Tema Matrix activo, ignorando clic en botón de tema");
+        return;
+      }
+      
       if (curr === "dark") next = "light";
       else if (curr === "light") next = "dark";
       
       root.setAttribute("data-theme", next);
       localStorage.setItem(key, next);
+      // Limpiar estado de Matrix si se cambia manualmente
+      localStorage.removeItem(matrixKey);
       syncBtn();
     });
   }
 })();
+
+// ================== Funciones para Brand Color ==================
+/**
+ * Cambia el brand color a verde para el tema Matrix
+ */
+function setMatrixBrandColor() {
+  const root = document.documentElement;
+  // Guardar el brand color original si no está guardado
+  if (!localStorage.getItem("original_brand_color")) {
+    const computedStyle = getComputedStyle(root);
+    const originalBrand = computedStyle.getPropertyValue('--brand').trim();
+    localStorage.setItem("original_brand_color", originalBrand);
+  }
+  
+  // Aplicar brand color verde
+  root.style.setProperty('--brand', '#00ff00');
+  root.style.setProperty('--brand-hover', '#00ff41');
+  root.style.setProperty('--brand-light', 'rgba(0, 255, 0, 0.1)');
+}
+
+/**
+ * Restaura el brand color original
+ */
+function restoreNormalBrandColor() {
+  const root = document.documentElement;
+  const originalBrand = localStorage.getItem("original_brand_color");
+  
+  if (originalBrand) {
+    // Restaurar colores originales
+    root.style.setProperty('--brand', originalBrand);
+    
+    // Determinar brand-hover y brand-light basado en el color original
+    if (originalBrand === '#a78bfa') {
+      root.style.setProperty('--brand-hover', '#8b5cf6');
+      root.style.setProperty('--brand-light', 'rgba(167, 139, 250, 0.1)');
+    } else {
+      // Para otros colores, usar variaciones automáticas
+      root.style.setProperty('--brand-hover', originalBrand);
+      root.style.setProperty('--brand-light', `${originalBrand}1a`);
+    }
+  } else {
+    // Fallback a colores por defecto si no se guardó el original
+    root.style.setProperty('--brand', '#a78bfa');
+    root.style.setProperty('--brand-hover', '#8b5cf6');
+    root.style.setProperty('--brand-light', 'rgba(167, 139, 250, 0.1)');
+  }
+}
 
 // ================== Tema Matrix Easter Egg ==================
 /**
@@ -66,12 +135,21 @@
       const currentTheme = root.getAttribute("data-theme");
       
       if (currentTheme === "matrix") {
-        // Volver al tema anterior
+        // Volver al tema anterior guardado
         const saved = localStorage.getItem("ugb_theme") || "dark";
         root.setAttribute("data-theme", saved);
+        // Limpiar estado de Matrix
+        localStorage.removeItem("ugb_matrix_theme");
+        // Restaurar brand color normal
+        restoreNormalBrandColor();
+        console.log("Tema Matrix desactivado, volviendo a:", saved);
       } else {
         // Activar Matrix
         root.setAttribute("data-theme", "matrix");
+        localStorage.setItem("ugb_matrix_theme", "true");
+        // Cambiar brand color a verde
+        setMatrixBrandColor();
+        console.log("Tema Matrix activado");
       }
     }
   });
@@ -396,205 +474,8 @@
   // Los estilos ahora están en style.css
 })();
 
-// ================== Tema Matrix con F12 ==================
-(function matrixThemeInit() {
-  const root = document.documentElement;
-  const matrixKey = "ugb_matrix_theme";
-  let matrixActive = false;
-  
-  // Cargar estado del tema Matrix
-  const savedMatrixState = localStorage.getItem(matrixKey);
-  if (savedMatrixState === "true") {
-    activateMatrixTheme();
-  }
-  
-  function activateMatrixTheme() {
-    matrixActive = true;
-    root.setAttribute("data-theme", "matrix");
-    localStorage.setItem(matrixKey, "true");
-    
-    // Agregar clase especial para efectos adicionales
-    document.body.classList.add("matrix-active");
-    
-    // Crear efecto de lluvia de caracteres Matrix
-    createMatrixRain();
-    
-    // Crear efecto de partículas flotantes
-    createMatrixParticles();
-    
-    console.log("Tema Matrix activado");
-  }
-  
-  function deactivateMatrixTheme() {
-    matrixActive = false;
-    root.removeAttribute("data-theme");
-    document.body.classList.remove("matrix-active");
-    
-    // Restaurar tema guardado
-    const saved = localStorage.getItem("ugb_theme");
-    if (saved === "light" || saved === "dark" || saved === "matrix") {
-      root.setAttribute("data-theme", saved);
-    }
-    
-    // Limpiar efecto de lluvia
-    const matrixRain = document.getElementById("matrix-rain");
-    if (matrixRain) {
-      matrixRain.remove();
-    }
-    
-    // Limpiar efecto de partículas
-    const matrixParticles = document.getElementById("matrix-particles");
-    if (matrixParticles) {
-      matrixParticles.remove();
-    }
-    
-    localStorage.setItem(matrixKey, "false");
-    console.log("Tema Matrix desactivado");
-  }
-  
-  function createMatrixRain() {
-    // Remover lluvia existente si existe
-    const existingRain = document.getElementById("matrix-rain");
-    if (existingRain) {
-      existingRain.remove();
-    }
-    
-    const rain = document.createElement("div");
-    rain.id = "matrix-rain";
-    rain.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-      font-family: 'Inconsolata', monospace;
-      font-size: 14px;
-      color: #00ff00;
-      opacity: 0.3;
-    `;
-    
-    document.body.appendChild(rain);
-    
-    // Crear columnas de caracteres Matrix solo en los costados
-    const characters = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-    const containerWidth = window.innerWidth;
-    const centerStart = containerWidth * 0.2; // 20% desde la izquierda
-    const centerEnd = containerWidth * 0.8;   // 80% desde la izquierda
-    const columnWidth = 20;
-    
-    // Crear columnas en el lado izquierdo (0% a 20%)
-    const leftColumns = Math.floor(centerStart / columnWidth);
-    for (let i = 0; i < leftColumns; i++) {
-      const column = document.createElement("div");
-      column.style.cssText = `
-        position: absolute;
-        top: -100px;
-        left: ${i * columnWidth}px;
-        width: ${columnWidth}px;
-        height: 100vh;
-        animation: matrixFall ${3 + Math.random() * 2}s linear infinite;
-        animation-delay: ${Math.random() * 2}s;
-      `;
-      
-      // Generar caracteres para la columna
-      let columnText = "";
-      for (let j = 0; j < 50; j++) {
-        columnText += characters[Math.floor(Math.random() * characters.length)] + "<br>";
-      }
-      column.innerHTML = columnText;
-      
-      rain.appendChild(column);
-    }
-    
-    // Crear columnas en el lado derecho (80% a 100%)
-    const rightColumns = Math.floor((containerWidth - centerEnd) / columnWidth);
-    for (let i = 0; i < rightColumns; i++) {
-      const column = document.createElement("div");
-      column.style.cssText = `
-        position: absolute;
-        top: -100px;
-        left: ${centerEnd + (i * columnWidth)}px;
-        width: ${columnWidth}px;
-        height: 100vh;
-        animation: matrixFall ${3 + Math.random() * 2}s linear infinite;
-        animation-delay: ${Math.random() * 2}s;
-      `;
-      
-      // Generar caracteres para la columna
-      let columnText = "";
-      for (let j = 0; j < 50; j++) {
-        columnText += characters[Math.floor(Math.random() * characters.length)] + "<br>";
-      }
-      column.innerHTML = columnText;
-      
-      rain.appendChild(column);
-    }
-    
-    // Agregar CSS para la animación
-    if (!document.getElementById("matrix-rain-styles")) {
-      const style = document.createElement("style");
-      style.id = "matrix-rain-styles";
-      style.textContent = `
-        @keyframes matrixFall {
-          0% { transform: translateY(-100vh); }
-          100% { transform: translateY(100vh); }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-  }
-  
-  function createMatrixParticles() {
-    // Remover partículas existentes si existen
-    const existingParticles = document.getElementById("matrix-particles");
-    if (existingParticles) {
-      existingParticles.remove();
-    }
-    
-    const particles = document.createElement("div");
-    particles.id = "matrix-particles";
-    particles.className = "matrix-particles";
-    document.body.appendChild(particles);
-  }
-  
-  // Detectar F12
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "F12") {
-      e.preventDefault();
-      
-      if (matrixActive) {
-        deactivateMatrixTheme();
-      } else {
-        activateMatrixTheme();
-      }
-    }
-  });
-  
-  // Redimensionar la lluvia cuando cambie el tamaño de la ventana
-  window.addEventListener("resize", () => {
-    if (matrixActive) {
-      createMatrixRain();
-      createMatrixParticles();
-    }
-  });
-  
-  // Limpiar efectos al cambiar de página
-  window.addEventListener("beforeunload", () => {
-    if (matrixActive) {
-      const matrixRain = document.getElementById("matrix-rain");
-      if (matrixRain) {
-        matrixRain.remove();
-      }
-      const matrixParticles = document.getElementById("matrix-particles");
-      if (matrixParticles) {
-        matrixParticles.remove();
-      }
-    }
-  });
-})();
+// Esta función duplicada fue eliminada para evitar conflictos
+// La funcionalidad del tema Matrix está ahora integrada en la función principal
 
 // ================== Player Global Persistente ==================
 /**

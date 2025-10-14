@@ -2,7 +2,7 @@
 
 /* Variables CSS para el tema Matrix */
 :root[data-theme="matrix"] {
-  /* Colores principales de Matrix */
+ 
   --bg: #000000;
   --bg-elev: #001100;
   --bg-secondary: #002200;
@@ -10,10 +10,10 @@
   --fg-muted: #00cc00;
   --fg-subtle: #009900;
   --muted: #00aa00;
-  --brand: #00ff00;
-  --brand-hover: #00ff41;
-  --brand-light: rgba(0, 255, 0, 0.1);
-  --brand-ink: #000000;
+  --brand: #00ff00 !important; /* Forzar color verde */
+  --brand-hover: #00ff41 !important;
+  --brand-light: rgba(0, 255, 0, 0.1) !important;
+  --brand-ink: #000000 !important;
   --border: #003300;
   --border-light: #006600;
   --card: #001100;
@@ -702,6 +702,61 @@ body[data-theme="matrix"] .sr-only {
     background: #000000 !important;
     color: #00ff00 !important;
   }
+}
+
+
+body[data-theme="matrix"] * {
+  color: inherit !important; /* Mantener colores heredados pero permitir sobrescritura */
+}
+
+
+body[data-theme="matrix"] .btn.primary,
+body[data-theme="matrix"] .btn[style*="background: var(--brand)"],
+body[data-theme="matrix"] .btn[style*="background-color: var(--brand)"] {
+  background: #00ff00 !important;
+  color: #000000 !important;
+  border-color: #00ff00 !important;
+}
+
+body[data-theme="matrix"] .btn.primary:hover,
+body[data-theme="matrix"] .btn[style*="background: var(--brand)"]:hover,
+body[data-theme="matrix"] .btn[style*="background-color: var(--brand)"]:hover {
+  background: #00ff41 !important;
+  border-color: #00ff41 !important;
+}
+
+/* Forzar colores en botones específicos del reproductor */
+body[data-theme="matrix"] .player-btn.play {
+  background: #00ff00 !important;
+  color: #000000 !important;
+  border-color: #00ff00 !important;
+}
+
+body[data-theme="matrix"] .player-btn.play:hover {
+  background: #00ff41 !important;
+  border-color: #00ff41 !important;
+}
+
+/* Forzar colores en barras de progreso */
+body[data-theme="matrix"] .progress-bar::before,
+body[data-theme="matrix"] .volume-bar::before {
+  background: linear-gradient(90deg, #00ff00, #00ff41) !important;
+  box-shadow: 0 0 10px #00ff00 !important;
+}
+
+/* Forzar colores en elementos con brand color */
+body[data-theme="matrix"] .brand-color,
+body[data-theme="matrix"] [style*="color: var(--brand)"] {
+  color: #00ff00 !important;
+  text-shadow: 0 0 10px #00ff00 !important;
+}
+
+/* Forzar colores en enlaces */
+body[data-theme="matrix"] a:hover,
+body[data-theme="matrix"] .profile-link:hover,
+body[data-theme="matrix"] [style*="color: var(--brand)"]:hover {
+  color: #00ff41 !important;
+  text-shadow: 0 0 10px #00ff41 !important;
 }
 
 /* Efectos de transición suave al cambiar tema */
