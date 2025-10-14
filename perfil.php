@@ -74,12 +74,18 @@ try {
 $releases = [];
 try {
   $stmt = $pdo->prepare("
-    SELECT r.id, r.title, r.cover_path, r.release_date, r.type_derived, r.download_enabled,
-           COUNT(t.id) as track_count
+    SELECT r.id, r.title, r.cover_path, r.release_date, r.download_enabled,
+           COUNT(t.id) as track_count,
+           CASE
+             WHEN COUNT(t.id) = 1 THEN 'single'
+             WHEN COUNT(t.id) BETWEEN 2 AND 5 THEN 'ep'
+             WHEN COUNT(t.id) >= 6 THEN 'album'
+             ELSE r.type
+           END AS type_derived
     FROM releases r
     LEFT JOIN tracks t ON t.release_id = r.id
     WHERE r.artist_id = ? AND r.status = 'approved'
-    GROUP BY r.id
+    GROUP BY r.id, r.title, r.cover_path, r.release_date, r.download_enabled, r.type, r.created_at
     ORDER BY r.release_date DESC, r.created_at DESC
     LIMIT 6
   ");
