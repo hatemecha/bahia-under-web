@@ -121,7 +121,7 @@ if (!function_exists('u')) {
 
     <div class="actions">
       <form class="search" role="search" method="get" action="<?php echo u('buscar.php'); ?>">
-        <input aria-label="Buscar" name="q" type="search" placeholder="Buscar..." />
+        <input aria-label="Buscar" name="q" type="search" placeholder="Buscar..." autocomplete="off" spellcheck="false" />
       </form>
 
       <?php if (!empty($_SESSION['uid'])): ?>

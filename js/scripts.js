@@ -80,14 +80,14 @@
 // ================== Búsqueda con autocompletado ==================
 /**
  * Inicializa el sistema de búsqueda con sugerencias en tiempo real
- * Proporciona autocompletado y navegación por teclado (no funciona del todo bien)
+ * Proporciona autocompletado y navegación por teclado
  * 
  * @function searchInit
  * @returns {void}
  */
 (function searchInit() {
-  const searchForm = document.querySelector('.search form');
-  const searchInput = document.querySelector('.search input[type="search"]');
+  const searchForm = document.querySelector('form.search');
+  const searchInput = document.querySelector('form.search input[type="search"]');
   
   if (!searchForm || !searchInput) return;
   
@@ -110,25 +110,27 @@
     suggestionsContainer.className = 'search-suggestions';
     suggestionsContainer.style.cssText = `
       position: absolute;
-      top: 100%;
+      top: calc(100% + 0.25rem);
       left: 0;
       right: 0;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
+      background: var(--card-bg, #fff);
+      border: 1px solid var(--border-color, #ddd);
       border-radius: 0.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 1000;
-      max-height: 300px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+      z-index: 9999;
+      max-height: 400px;
       overflow-y: auto;
       display: none;
+      min-width: 320px;
     `;
     
     searchForm.style.position = 'relative';
     searchForm.appendChild(suggestionsContainer);
   }
   
-  // Obtener sugerencias del servidor
+
   /**
+   * Obtiene sugerencias de búsqueda desde el servidor
    * 
    * @function fetchSuggestions
    * @param {string} query - Término de búsqueda
@@ -140,8 +142,15 @@
       return;
     }
     
+    // Mostrar indicador de carga
+    showLoadingState();
+    
     try {
-      const response = await fetch(`search-suggestions.php?q=${encodeURIComponent(query)}`);
+      // Detectar si estamos en un subdirectorio (como /mod/)
+      const isInSubdir = window.location.pathname.includes('/mod/');
+      const baseUrl = isInSubdir ? '../search-suggestions.php' : 'search-suggestions.php';
+      
+      const response = await fetch(`${baseUrl}?q=${encodeURIComponent(query)}`);
       const data = await response.json();
       currentSuggestions = data.suggestions || [];
       showSuggestions();
@@ -151,8 +160,28 @@
     }
   }
   
+  // Mostrar indicador de carga
+  /**
+   * Muestra un indicador de carga mientras se obtienen las sugerencias
+   * 
+   * @function showLoading
+   * @returns {void}
+   */
+  function showLoadingState() {
+    if (!suggestionsContainer) createSuggestionsContainer();
+    
+    suggestionsContainer.innerHTML = `
+      <div class="suggestion-loading">
+        <span class="loading-spinner">🔍</span>
+        <span>Buscando...</span>
+      </div>
+    `;
+    suggestionsContainer.style.display = 'block';
+  }
+  
   // Mostrar sugerencias
   /**
+   * Muestra las sugerencias de búsqueda o un mensaje si no hay resultados
    * 
    * @function showSuggestions
    * @returns {void}
@@ -161,7 +190,18 @@
     if (!suggestionsContainer) createSuggestionsContainer();
     
     if (currentSuggestions.length === 0) {
-      hideSuggestions();
+      // Mostrar mensaje de "no hay resultados" si el usuario escribió algo
+      if (searchInput.value.trim().length >= 2) {
+        suggestionsContainer.innerHTML = `
+          <div class="suggestion-empty">
+            <span class="suggestion-icon">🔍</span>
+            <span class="suggestion-text">No se encontraron resultados</span>
+          </div>
+        `;
+        suggestionsContainer.style.display = 'block';
+      } else {
+        hideSuggestions();
+      }
       return;
     }
     
@@ -284,6 +324,7 @@
   }
   
   // Event listeners
+  let lastQuery = '';
   searchInput.addEventListener('input', (e) => {
     const query = e.target.value.trim();
     
@@ -292,10 +333,15 @@
       clearTimeout(searchTimeout);
     }
     
-    // Debounce: esperar 300ms antes de buscar
+    // Si estamos borrando texto, responder más rápido
+    const isDeleting = query.length < lastQuery.length;
+    const delay = isDeleting ? 150 : 300;
+    lastQuery = query;
+    
+    // Debounce: esperar antes de buscar
     searchTimeout = setTimeout(() => {
       fetchSuggestions(query);
-    }, 300);
+    }, delay);
   });
   
   searchInput.addEventListener('keydown', (e) => {
@@ -323,11 +369,10 @@
     }
   });
   
-  searchInput.addEventListener('focus', () => {
-    if (currentSuggestions.length > 0) {
-      showSuggestions();
-    }
-  });
+        searchInput.addEventListener('focus', () => {
+            // No mostrar sugerencias automáticamente al hacer focus
+            // Solo se mostrarán cuando el usuario escriba
+        });
   
   // Cerrar sugerencias al hacer clic fuera
   document.addEventListener('click', (e) => {
@@ -348,49 +393,7 @@
   });
   
   // Estilos para las sugerencias
-  const style = document.createElement('style');
-  style.textContent = `
-    .search-suggestions {
-      font-family: inherit;
-    }
-    
-    .suggestion-item {
-      display: flex;
-      align-items: center;
-      padding: 0.75rem 1rem;
-      cursor: pointer;
-      border-bottom: 1px solid var(--border-color);
-      transition: background-color 0.2s;
-    }
-    
-    .suggestion-item:last-child {
-      border-bottom: none;
-    }
-    
-    .suggestion-item:hover,
-    .suggestion-item.selected {
-      background-color: var(--hover-bg);
-    }
-    
-    .suggestion-icon {
-      margin-right: 0.75rem;
-      font-size: 1.1rem;
-    }
-    
-    .suggestion-text {
-      flex: 1;
-      font-weight: 500;
-    }
-    
-    .suggestion-type {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      background: var(--bg-color);
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-    }
-  `;
-  document.head.appendChild(style);
+  // Los estilos ahora están en style.css
 })();
 
 // ================== Tema Matrix con F12 ==================

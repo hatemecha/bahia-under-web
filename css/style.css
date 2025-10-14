@@ -519,7 +519,7 @@ section {
   color: var(--fg-muted);
 }
 
-/* Mejoras para el buscador con sugerencias (no funciona del todo bien) */
+/* Mejoras para el buscador con sugerencias */
 .search {
   position: relative;
 }
@@ -533,59 +533,166 @@ section {
 
 .search-suggestions {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 0.25rem);
   left: 0;
   right: 0;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  z-index: var(--z-dropdown);
-  max-height: 300px;
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #ddd);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-lg, 0 4px 20px rgba(0, 0, 0, 0.15));
+  z-index: 9999;
+  max-height: 400px;
   overflow-y: auto;
   display: none;
-  margin-top: 2px;
+  min-width: 320px;
 }
 
 .suggestion-item {
   display: flex;
   align-items: center;
-  padding: var(--space-md) var(--space-lg);
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
   cursor: pointer;
-  border-bottom: 1px solid var(--border);
-  transition: background-color 0.2s ease;
+  border-bottom: 1px solid var(--border, #ddd);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  color: var(--fg, #333);
+}
+
+.suggestion-item:first-child {
+  border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .suggestion-item:last-child {
   border-bottom: none;
+  border-radius: 0 0 0.5rem 0.5rem;
 }
 
 .suggestion-item:hover,
 .suggestion-item.selected {
-  background-color: var(--bg-elev);
+  background-color: var(--brand-light, rgba(99, 102, 241, 0.1));
+  padding-left: 1.25rem;
+  color: var(--fg, #333);
 }
 
 .suggestion-icon {
-  margin-right: var(--space-md);
-  font-size: 1.1rem;
-  width: 20px;
-  text-align: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  opacity: 0.8;
 }
 
 .suggestion-text {
   flex: 1;
   font-weight: 500;
-  color: var(--fg);
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .suggestion-type {
   font-size: 0.75rem;
-  color: var(--fg-muted);
-  background: var(--bg-secondary);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
+  color: var(--fg-muted, #666);
+  background: var(--bg-secondary, #f5f5f5);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  flex-shrink: 0;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.suggestion-loading,
+.suggestion-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1rem;
+  color: var(--fg-muted, #666);
+  font-size: 0.95rem;
+}
+
+.suggestion-loading .loading-spinner {
+  font-size: 1.2rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+.suggestion-empty {
+  font-style: italic;
+}
+
+.search-suggestions::-webkit-scrollbar {
+  width: 8px;
+}
+
+.search-suggestions::-webkit-scrollbar-track {
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb {
+  background: var(--border, #ddd);
+  border-radius: 4px;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-muted, #666);
+}
+
+/* Estilos específicos para tema oscuro */
+body[data-theme="dark"] .search-suggestions,
+:root[data-theme="dark"] .search-suggestions {
+  background: #1a1a1a !important;
+  border: 1px solid #333 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+body[data-theme="dark"] .suggestion-item,
+:root[data-theme="dark"] .suggestion-item {
+  color: #fff !important;
+  border-bottom-color: #333 !important;
+}
+
+body[data-theme="dark"] .suggestion-item:hover,
+body[data-theme="dark"] .suggestion-item.selected,
+:root[data-theme="dark"] .suggestion-item:hover,
+:root[data-theme="dark"] .suggestion-item.selected {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+body[data-theme="dark"] .suggestion-type,
+:root[data-theme="dark"] .suggestion-type {
+  color: #ccc !important;
+  background: #333 !important;
+}
+
+body[data-theme="dark"] .suggestion-loading,
+body[data-theme="dark"] .suggestion-empty,
+:root[data-theme="dark"] .suggestion-loading,
+:root[data-theme="dark"] .suggestion-empty {
+  color: #ccc !important;
+}
+
+body[data-theme="dark"] .search-suggestions::-webkit-scrollbar-track,
+:root[data-theme="dark"] .search-suggestions::-webkit-scrollbar-track {
+  background: #333 !important;
+}
+
+body[data-theme="dark"] .search-suggestions::-webkit-scrollbar-thumb,
+:root[data-theme="dark"] .search-suggestions::-webkit-scrollbar-thumb {
+  background: #555 !important;
+}
+
+body[data-theme="dark"] .search-suggestions::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"] .search-suggestions::-webkit-scrollbar-thumb:hover {
+  background: #777 !important;
 }
 
 .auth {
