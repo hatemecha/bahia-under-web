@@ -78,10 +78,15 @@ if (!function_exists('u')) {
   <meta name="color-scheme" content="dark light" />
   <title>Bahia Under</title>
 
-  <!-- CSS + JS -->
-  <link rel="stylesheet" href="<?php echo u('css/style.css'); ?>" />
-  <link rel="stylesheet" href="<?php echo u('css/matrix-theme.css'); ?>" />
-  <script src="<?php echo u('js/scripts.js'); ?>" defer></script>
+  <!-- CSS + JS con versionado para cache -->
+  <?php
+  $css_version = filemtime(__DIR__ . '/../css/style.css') ?: time();
+  $matrix_version = filemtime(__DIR__ . '/../css/matrix-theme.css') ?: time();
+  $js_version = filemtime(__DIR__ . '/../js/scripts.js') ?: time();
+  ?>
+  <link rel="stylesheet" href="<?php echo u('css/style.css'); ?>?v=<?php echo $css_version; ?>" />
+  <link rel="stylesheet" href="<?php echo u('css/matrix-theme.css'); ?>?v=<?php echo $matrix_version; ?>" />
+  <script src="<?php echo u('js/scripts.js'); ?>?v=<?php echo $js_version; ?>" defer></script>
 
   <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>

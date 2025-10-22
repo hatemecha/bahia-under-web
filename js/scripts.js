@@ -117,6 +117,29 @@ function restoreNormalBrandColor() {
     root.style.setProperty('--brand-hover', '#8b5cf6');
     root.style.setProperty('--brand-light', 'rgba(167, 139, 250, 0.1)');
   }
+  
+  // Limpiar cualquier estilo inline que pueda estar interfiriendo
+  root.style.removeProperty('--brand');
+  root.style.removeProperty('--brand-hover');
+  root.style.removeProperty('--brand-light');
+  
+  // Forzar recarga de estilos CSS
+  const styleSheets = document.styleSheets;
+  for (let i = 0; i < styleSheets.length; i++) {
+    try {
+      if (styleSheets[i].href && styleSheets[i].href.includes('style.css')) {
+        const link = document.querySelector(`link[href*="style.css"]`);
+        if (link) {
+          const href = link.href;
+          link.href = '';
+          link.href = href;
+        }
+        break;
+      }
+    } catch (e) {
+      // Ignorar errores de CORS
+    }
+  }
 }
 
 // ================== Tema Matrix Easter Egg ==================
@@ -129,27 +152,53 @@ function restoreNormalBrandColor() {
   const root = document.documentElement;
   
   document.addEventListener("keydown", (e) => {
-    // Solo activar con F12
     if (e.key === "F12") {
       e.preventDefault();
       const currentTheme = root.getAttribute("data-theme");
       
       if (currentTheme === "matrix") {
-        // Volver al tema anterior guardado
         const saved = localStorage.getItem("ugb_theme") || "dark";
         root.setAttribute("data-theme", saved);
-        // Limpiar estado de Matrix
+        
         localStorage.removeItem("ugb_matrix_theme");
-        // Restaurar brand color normal
-        restoreNormalBrandColor();
-        console.log("Tema Matrix desactivado, volviendo a:", saved);
+        
+        setTimeout(() => {
+          // Restaurar brand color normal
+          restoreNormalBrandColor();
+          
+          const btn = document.querySelector("[data-theme-toggle]");
+          if (btn) {
+            btn.setAttribute("aria-pressed", String(saved === "dark"));
+            btn.innerHTML = saved === "light" ? "☀️" : "🌙";
+          }
+          
+          console.log("Tema Matrix desactivado, volviendo a:", saved);
+        }, 50);
+        
       } else {
-        // Activar Matrix
+        if (!localStorage.getItem("original_brand_color")) {
+          const computedStyle = getComputedStyle(root);
+          const originalBrand = computedStyle.getPropertyValue('--brand').trim();
+          localStorage.setItem("original_brand_color", originalBrand);
+        }
+        
         root.setAttribute("data-theme", "matrix");
         localStorage.setItem("ugb_matrix_theme", "true");
-        // Cambiar brand color a verde
-        setMatrixBrandColor();
-        console.log("Tema Matrix activado");
+        
+        // Esperar un momento para que se aplique el cambio de tema
+        setTimeout(() => {
+          // Cambiar brand color a verde
+          setMatrixBrandColor();
+          
+          // Actualizar botón de tema
+          const btn = document.querySelector("[data-theme-toggle]");
+          if (btn) {
+            btn.setAttribute("aria-pressed", "false");
+            btn.innerHTML = "🌙";
+          }
+          
+          console.log("Tema Matrix activado");
+        }, 50);
       }
     }
   });
@@ -518,6 +567,23 @@ function restoreNormalBrandColor() {
            window.location.href.includes('lanzamiento.php');
   }
 
+  // Función para mantener el reproductor visible en todas las páginas
+  function ensurePlayerVisibility() {
+    // Solo mostrar el reproductor si hay música realmente reproduciéndose o pausada
+    if (queue.length > 0 && audio.src && audio.src !== '') {
+      // Hay música cargada y hay cola, mostrar el reproductor
+      bar.hidden = false;
+      bar.style.display = '';
+      console.log('Reproductor mantenido visible - música cargada y reproduciéndose/pausada');
+      return;
+    }
+    
+    // Si no hay música activa, ocultar el reproductor
+    bar.hidden = true;
+    bar.style.display = 'none';
+    console.log('Reproductor ocultado - no hay música activa');
+  }
+
   function saveState(pausedOverride = null) {
     const state = {
       queue,
@@ -533,6 +599,37 @@ function restoreNormalBrandColor() {
   }
 
   function loadState() {
+    // Verificar si hay estado guardado válido primero
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (!raw) {
+        console.log('No hay estado guardado en localStorage');
+        ensurePlayerVisibility(); // Usar la función inteligente
+        return;
+      }
+      
+      const s = JSON.parse(raw);
+      if (!Array.isArray(s.queue) || s.queue.length === 0) {
+        console.log('Cola guardada vacía o inválida');
+        ensurePlayerVisibility(); // Usar la función inteligente
+        return;
+      }
+      
+      // Si hay estado válido, proceder con la carga
+      console.log('Estado válido encontrado, cargando reproductor...');
+    } catch (error) {
+      console.log('Error al verificar estado guardado:', error);
+      ensurePlayerVisibility(); // Usar la función inteligente
+      return;
+    }
+
+    // Verificar sesión solo si es necesario para la funcionalidad específica
+    if (typeof window.userId === 'undefined') {
+      console.log('Variables globales aún no cargadas, esperando...');
+      setTimeout(loadState, 100);
+      return;
+    }
+
     // Si ya tenemos una cola activa y reproduciendo, no sobrescribir
     if (queue.length > 0 && !audio.paused) {
       console.log('Ya hay una cola activa reproduciendo, no cargando estado');
@@ -947,6 +1044,64 @@ function restoreNormalBrandColor() {
       hidePlayer();
     });
   }
+
+  // ================== Persistencia del Reproductor ==================
+  // Mantener el reproductor visible durante la navegación (tipo YouTube Premium)
+  
+  // Verificar visibilidad del reproductor al cargar la página
+  document.addEventListener('DOMContentLoaded', () => {
+    // Pequeño delay para asegurar que las variables globales estén cargadas
+    setTimeout(() => {
+      ensurePlayerVisibility();
+    }, 200);
+  });
+
+  // Verificar visibilidad cuando las variables globales cambien
+  function checkPlayerVisibility() {
+    // Siempre verificar la visibilidad del reproductor
+    // No depender solo de la sesión de usuario
+    ensurePlayerVisibility();
+  }
+
+  // Observar cambios en las variables globales
+  let lastUserId = window.userId;
+  setInterval(() => {
+    if (typeof window.userId !== 'undefined' && window.userId !== lastUserId) {
+      lastUserId = window.userId;
+      checkPlayerVisibility();
+    }
+  }, 100);
+
+  // Mantener el reproductor visible al hacer clic en enlaces de navegación
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (link && link.href && !link.href.includes('#')) {
+      // Guardar el estado antes de navegar
+      if (queue.length > 0 && audio.src) {
+        saveState();
+        console.log('Estado guardado antes de navegar');
+      }
+    }
+  });
+
+  // Interceptar navegación para mantener el reproductor
+  const originalPushState = history.pushState;
+  const originalReplaceState = history.replaceState;
+  
+  history.pushState = function(...args) {
+    originalPushState.apply(history, args);
+    setTimeout(ensurePlayerVisibility, 50);
+  };
+  
+  history.replaceState = function(...args) {
+    originalReplaceState.apply(history, args);
+    setTimeout(ensurePlayerVisibility, 50);
+  };
+
+  // Escuchar eventos de popstate (botón atrás/adelante)
+  window.addEventListener('popstate', () => {
+    setTimeout(ensurePlayerVisibility, 50);
+  });
   
   
 

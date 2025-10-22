@@ -113,6 +113,7 @@ if ($canManage && $_SERVER['REQUEST_METHOD'] === 'POST') {
   header('Cache-Control: no-cache, no-store, must-revalidate');
   header('Pragma: no-cache');
   header('Expires: 0');
+  header('Vary: Cookie');
   $redirect_url = 'eventos.php?t=' . time();
   if (isset($redirect_param)) {
     $redirect_url .= '&' . $redirect_param;
@@ -122,9 +123,17 @@ if ($canManage && $_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Headers para prevenir caché en la página principal
-header('Cache-Control: no-cache, no-store, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
+if (!empty($_SESSION['uid'])) {
+    // Usuarios autenticados - no cache
+    header('Cache-Control: private, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+    header('Vary: Cookie');
+} else {
+    // Usuarios no autenticados - cache corto
+    header('Cache-Control: public, max-age=1800'); // 30 minutos
+    header('Vary: Accept-Encoding');
+}
 
 // Incluir header después del procesamiento del formulario
 include __DIR__ . '/includes/header.php';

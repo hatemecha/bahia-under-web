@@ -6,6 +6,8 @@ require_once __DIR__ . '/includes/security.php';
 // Configurar headers para AJAX
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, must-revalidate');
+header('Pragma: no-cache');
+header('Vary: Accept-Encoding');
 
 // Obtener término de búsqueda
 $query = sanitize_search_query($_GET['q'] ?? '');

@@ -1,9 +1,9 @@
 <?php
 // Generar variables globales para JavaScript (versión segura)
 header('Content-Type: application/javascript');
-header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Cache-Control: no-cache, must-revalidate');
 header('Pragma: no-cache');
-header('Expires: 0');
+header('Vary: Cookie, Accept-Encoding');
 
 require_once __DIR__ . '/../includes/init.php';
 

@@ -4,54 +4,55 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 include __DIR__ . '/includes/header.php';
 
-// Traer últimos lanzamientos (aprobados) con al menos 1 pista
+// Traer últimos lanzamientos (aprobados) con al menos 1 pista - consulta optimizada
 $items = [];
+$events = [];
+
 if ($pdo) {
   try {
+    // Consulta optimizada para lanzamientos - incluyendo campos necesarios
     $sql = "
       SELECT
-        r.id, r.title, r.cover_path, r.release_date, r.download_enabled, r.artist_id,
+        r.id, r.title, r.cover_path, r.release_date, r.artist_id, r.download_enabled,
         u.username,
         COUNT(t.id) AS track_count,
         CASE
           WHEN COUNT(t.id) = 1 THEN 'single'
           WHEN COUNT(t.id) BETWEEN 2 AND 5 THEN 'ep'
           WHEN COUNT(t.id) >= 6 THEN 'album'
-          ELSE r.type
+          ELSE COALESCE(r.type, 'single')
         END AS type_derived,
         COALESCE(r.reviewed_at, r.created_at) AS sort_ts
       FROM releases r
       JOIN users u ON u.id = r.artist_id
       LEFT JOIN tracks t ON t.release_id = r.id
       WHERE r.status = 'approved'
-      GROUP BY r.id, r.title, r.cover_path, r.release_date, r.download_enabled, r.artist_id, u.username, r.type, r.reviewed_at, r.created_at
+      GROUP BY r.id, r.title, r.cover_path, r.release_date, r.artist_id, r.download_enabled, u.username, r.type, r.reviewed_at, r.created_at
       HAVING COUNT(t.id) >= 1
       ORDER BY sort_ts DESC
       LIMIT 3
     ";
     $stmt = $pdo->query($sql);
     $items = $stmt->fetchAll();
-  } catch (Throwable $e) {
-    devlog('home.list_failed', ['err'=>$e->getMessage()]);
-    $items = [];
-  }
-} else {
-  devlog('home.list_failed', ['err'=>'Database connection not available']);
-  $items = [];
-}
-
-// Próximos eventos (activos)
-$events = [];
-if ($pdo) {
-  try {
-    $stmt = $pdo->query("SELECT id, title, event_dt, place_name, maps_url, flyer_path FROM events WHERE status = 'active' AND event_dt >= NOW() ORDER BY event_dt ASC LIMIT 4");
+    
+    // Consulta optimizada para eventos - solo campos necesarios
+    $stmt = $pdo->query("
+      SELECT id, title, event_dt, place_name, flyer_path 
+      FROM events 
+      WHERE status = 'active' AND event_dt >= NOW() 
+      ORDER BY event_dt ASC 
+      LIMIT 4
+    ");
     $events = $stmt->fetchAll();
+    
   } catch (Throwable $e) {
-    devlog('home.events_failed', ['err'=>$e->getMessage()]);
+    devlog('home.queries_failed', ['err'=>$e->getMessage()]);
+    $items = [];
     $events = [];
   }
 } else {
-  devlog('home.events_failed', ['err'=>'Database connection not available']);
+  devlog('home.queries_failed', ['err'=>'Database connection not available']);
+  $items = [];
   $events = [];
 }
 ?>

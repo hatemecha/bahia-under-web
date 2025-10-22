@@ -42,9 +42,14 @@ function set_security_headers() {
     
     // Cache control para páginas sensibles
     if (!empty($_SESSION['uid'])) {
-        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Cache-Control: private, no-cache, must-revalidate, max-age=0');
         header('Pragma: no-cache');
         header('Expires: 0');
+        header('Vary: Cookie');
+    } else {
+        // Cache público para usuarios no autenticados
+        header('Cache-Control: public, max-age=3600');
+        header('Vary: Accept-Encoding');
     }
 }
 
